@@ -1,11 +1,26 @@
 var hooks = require('hooks');
-var secrets = require('./secrets');
+
+var fileName = "./secret-config.json";
+var config;
+
+hooks.beforeAll(function (transactions, done) {
+  console.log("Hello World");
+  try {
+    config = require(fileName);
+  } catch (err) {
+    config = {};
+    console.error("unable to read file '"+ fileName +"': ", err);
+    console.error("see secret-config-sample.json for an example");
+  }
+  done();
+});
 
 hooks.beforeEach(function (transaction) {
+  console.log("Bye World");
   transaction.request.uri = setParameter(
     transaction.request.uri,
     'key',
-    secrets.API_KEY
+    config.API_KEY
   );
 
   transaction.fullPath = transaction.request.uri;
